@@ -3,8 +3,8 @@
  * Purpose: ABP 2D confine in a square using an Euler-Mayurama algorithm
  * Language: C++
  * Date: 2023
- * Compilation line to use pragma: g++ name.cpp -fopenmp -o name (on mac run g++-12 ; 12 latest version obtain using brew list gcc)
- * Compilation line to use pragma, simd (vectorization) and tuple: g++ -O3 -std=c++17 name.cpp -fopenmp -o name
+ * Compilation line to use pragma: g++ name.cpp -fopenmp -o name.o (on mac run g++-12 ; 12 latest version obtain using brew list gcc)
+ * Compilation line to use pragma, simd (vectorization) and tuple: g++ -O3 -std=c++17 name.cpp -fopenmp -o name.o
  */
 
 #include <iostream>
