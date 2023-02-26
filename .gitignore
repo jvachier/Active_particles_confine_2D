@@ -6,3 +6,6 @@
 
 # Ignore all text files
 *.txt
+
+# Ignore all executable files
+*.o
