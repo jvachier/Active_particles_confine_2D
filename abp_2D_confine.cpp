@@ -23,6 +23,7 @@ void update_position(
 	double *x, double *y, double phi, double prefactor_e, int Particles, 
 	double delta, double De, double Dt, double xi_e, double xi_px, 
 	double xi_py, double vs, double prefactor_xi_px, double prefactor_xi_py,
+	double r, double R, double F, double prefactor_interaction,
 	default_random_engine &generator, normal_distribution<double> &Gaussdistribution
 )
 {
@@ -34,8 +35,25 @@ void update_position(
 		xi_py = Gaussdistribution(generator);
 
 		phi = phi + prefactor_e * xi_e;
-		x[k] = x[k] + vs * cos(phi) * delta + xi_px * prefactor_xi_px;
-		y[k] = y[k] + vs * sin(phi) * delta + xi_py * prefactor_xi_py;
+
+		for (int j = 0; j < Particles; j++)
+		{
+			R = sqrt((x[j]-x[k])*(x[j]-x[k]) + (y[j]-y[k])*(y[j]-y[k]));
+			if (R < r)
+			{
+				F = 1.0; // this value needs to be checked 
+			}
+			else if (k==j)
+			{
+				F = 0.0;
+			}
+			else
+			{
+				F = prefactor_interaction / pow(R,14);
+			}
+		}
+		x[k] = x[k] + vs * cos(phi) * delta + F * x[k] * delta + xi_px * prefactor_xi_px;
+		y[k] = y[k] + vs * sin(phi) * delta + F * y[k] * delta  + xi_py * prefactor_xi_py;
 	}
 }
 
@@ -96,6 +114,7 @@ int main(int argc, char *argv[])
 
 	// read the parameters from the file
 	double epsilon, delta, Dt, De, vs;
+	double F, R;
 	int Particles;
 	fscanf(parameter, "%lf\t%lf\t%d\t%lf\t%lf\t%lf\n", &epsilon, &delta, &Particles, &Dt, &De, &vs);
 	printf("%lf\t%lf\t%d\t%lf\t%lf\t%lf\n", epsilon, delta, Particles, Dt, De, vs);
@@ -128,6 +147,9 @@ int main(int argc, char *argv[])
 	double prefactor_e = sqrt(2.0 * delta * De);
 	double prefactor_xi_px = sqrt(2.0 * delta * Dt);
 	double prefactor_xi_py = sqrt(2.0 * delta * Dt);
+	double prefactor_interaction = epsilon * 48.0;
+	double r = 1.5 * L;
+
 
 
 	clock_t tStart = clock(); // check time for one trajectory
@@ -138,7 +160,6 @@ int main(int argc, char *argv[])
 		x_x, y_y,
 		generator, distribution
 	);
-	// fprintf(datacsv,"Force,Deff,Drfit,\n");	// only for the first run as using 'a' for file
 	// Time evoultion
 	int time;
 	for (time = 0; time < N; time++)
@@ -147,6 +168,7 @@ int main(int argc, char *argv[])
 			x, y, phi, prefactor_e, Particles, 
 			delta, De, Dt, xi_e, xi_px, 
 			xi_py, vs, prefactor_xi_px, prefactor_xi_py,
+			r, R, F, prefactor_interaction,
 			generator, Gaussdistribution
 		);
 		if(time % 10 == 0 && time >= 0)
