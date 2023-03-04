@@ -24,32 +24,33 @@ void update_position(
 	double delta, double De, double Dt, double xi_e, double xi_px, 
 	double xi_py, double vs, double prefactor_xi_px, double prefactor_xi_py,
 	double r, double R, double F, double prefactor_interaction,
-	default_random_engine &generator, normal_distribution<double> &Gaussdistribution
+	default_random_engine &generator, normal_distribution<double> &Gaussdistribution, uniform_real_distribution<double> &distribution_e
 )
 {
+	double a = 0.0; // local variable - here check if no conflict elsewhere
 #pragma omp parallel for simd num_threads(2)
 	for (int k = 0; k < Particles; k++)
 	{
-		xi_e = Gaussdistribution(generator);
+		xi_e = distribution_e(generator);
 		xi_px = Gaussdistribution(generator);
 		xi_py = Gaussdistribution(generator);
 
-		phi = phi + prefactor_e * xi_e;
-
+		phi = (prefactor_e * xi_e); // be careful with radian and degree
+		F = 0.0;
 		for (int j = 0; j < Particles; j++)
 		{
-			R = sqrt((x[j]-x[k])*(x[j]-x[k]) + (y[j]-y[k])*(y[j]-y[k]));
-			if (R < r)
+			if (k!=j) // see how to improved the nested if conditions
 			{
-				F = 1.0; // this value needs to be checked 
-			}
-			else if (k==j)
-			{
-				F = 0.0;
-			}
-			else
-			{
-				F = prefactor_interaction / pow(R,14);
+				R = sqrt((x[j]-x[k])*(x[j]-x[k]) + (y[j]-y[k])*(y[j]-y[k]));
+				if (R < r)
+				{
+					a = prefactor_interaction / pow(R,14);
+					if (a > 1.0)
+					{
+						a = 0.5; // this value needs to be checked 
+					}
+					F += a;
+				}
 			}
 		}
 		x[k] = x[k] + vs * cos(phi) * delta + F * x[k] * delta + xi_px * prefactor_xi_px;
@@ -65,24 +66,48 @@ void print_file(
 {
 	for(int k = 0; k < Particles; k++)
 	{
-		fprintf(datacsv,"Particles%d,%lf,%lf,%d,\n",k,x[k],y[k],time);
+		fprintf(datacsv,"Particles%d,%lf,%lf,%d\n",k,x[k],y[k],time);
 	}
 }
 
 void initialization(
 	double *x, double *y, int Particles,
-	double x_x, double y_y,
 	default_random_engine &generator, uniform_real_distribution<double> &distribution
 )
 {
 #pragma omp parallel for simd num_threads(2)
 	for (int k = 0; k < Particles; k++)
 	{
-		x_x = distribution(generator);
-		y_y = distribution(generator);
-		x[k] = x_x;
-		y[k] = y_y;
+		x[k] = distribution(generator);
+		y[k] = distribution(generator);
 	}
+}
+
+
+void check_nooverlap(
+	double *x, double *y, int Particles,
+	double R, int L,
+	default_random_engine &generator, uniform_real_distribution<double> &distribution
+)
+{
+#pragma omp parallel for simd num_threads(2)
+	for (int k = 0; k < Particles; k++)
+	{
+		for (int j = 0; j < Particles; j++)
+		{
+			if (k != j)
+			{
+				R = sqrt((x[j]-x[k])*(x[j]-x[k]) + (y[j]-y[k])*(y[j]-y[k]));
+				while (R < 1.5 * L)
+				{
+					x[j] = distribution(generator);
+					y[j] = distribution(generator);
+					R = sqrt((x[j]-x[k])*(x[j]-x[k]) + (y[j]-y[k])*(y[j]-y[k]));
+				}
+			}
+		}
+	}
+
 }
 
 tuple<double, double> moments(double *x, int Particles)
@@ -123,7 +148,7 @@ int main(int argc, char *argv[])
 	double *y = (double *)malloc(Particles * sizeof(double)); // y-position
 
 	// parameters
-	const int N = 1E2; // number of iterations
+	const int N = 1E4; // number of iterations
 	const int L = 1.0; // particle size
 
 	// initialization of the random generator
@@ -135,6 +160,8 @@ int main(int argc, char *argv[])
 	normal_distribution<double> Gaussdistribution(0.0, 1.0);
 	// Distribution Uniform for initialization
 	uniform_real_distribution<double> distribution(-10.0,10.0);
+	//uniform_real_distribution<double> distribution_e(0.0,360.0*PI / 180.0); // directly in radian
+	uniform_real_distribution<double> distribution_e(0.0,360.0); 
 
 	double xi_px; // noise for x-position
 	double xi_py; // noise for y-position
@@ -148,18 +175,26 @@ int main(int argc, char *argv[])
 	double prefactor_xi_px = sqrt(2.0 * delta * Dt);
 	double prefactor_xi_py = sqrt(2.0 * delta * Dt);
 	double prefactor_interaction = epsilon * 48.0;
-	double r = 1.5 * L;
+	double r = 5.0 * L;
 
 
 
 	clock_t tStart = clock(); // check time for one trajectory
 
+	fprintf(datacsv,"Particles,x-position,y-position,time\n");
+
 	// initialization position and activity
 	initialization(
 		x, y, Particles,
-		x_x, y_y,
 		generator, distribution
 	);
+
+	check_nooverlap(
+		x, y, Particles,
+		R, L,
+		generator, distribution
+	);
+
 	// Time evoultion
 	int time;
 	for (time = 0; time < N; time++)
@@ -169,7 +204,7 @@ int main(int argc, char *argv[])
 			delta, De, Dt, xi_e, xi_px, 
 			xi_py, vs, prefactor_xi_px, prefactor_xi_py,
 			r, R, F, prefactor_interaction,
-			generator, Gaussdistribution
+			generator, Gaussdistribution, distribution_e
 		);
 		if(time % 10 == 0 && time >= 0)
 		{
