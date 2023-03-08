@@ -16,6 +16,7 @@
 #include <tuple> //to output multiple components of a function
 
 #define PI 3.141592653589793
+#define N_thread 4
 
 using namespace std;
 
@@ -28,7 +29,7 @@ void update_position(
 )
 {
 	double a = 0.0; // local variable - here check if no conflict elsewhere
-#pragma omp parallel for simd num_threads(2)
+#pragma omp parallel for simd num_threads(N_thread)
 	for (int k = 0; k < Particles; k++)
 	{
 		xi_e = distribution_e(generator);
@@ -75,7 +76,7 @@ void initialization(
 	default_random_engine &generator, uniform_real_distribution<double> &distribution
 )
 {
-#pragma omp parallel for simd num_threads(2)
+#pragma omp parallel for simd num_threads(N_thread)
 	for (int k = 0; k < Particles; k++)
 	{
 		x[k] = distribution(generator);
@@ -90,7 +91,7 @@ void check_nooverlap(
 	default_random_engine &generator, uniform_real_distribution<double> &distribution
 )
 {
-#pragma omp parallel for simd num_threads(2)
+#pragma omp parallel for simd num_threads(N_thread)
 	for (int k = 0; k < Particles; k++)
 	{
 		for (int j = 0; j < Particles; j++)
@@ -148,7 +149,7 @@ int main(int argc, char *argv[])
 	double *y = (double *)malloc(Particles * sizeof(double)); // y-position
 
 	// parameters
-	const int N = 1E4; // number of iterations
+	const int N = 1E3; // number of iterations
 	const int L = 1.0; // particle size
 
 	// initialization of the random generator
@@ -159,7 +160,7 @@ int main(int argc, char *argv[])
 	// Distributions Gaussian
 	normal_distribution<double> Gaussdistribution(0.0, 1.0);
 	// Distribution Uniform for initialization
-	uniform_real_distribution<double> distribution(-10.0,10.0);
+	uniform_real_distribution<double> distribution(-1000.0,1000.0);
 	//uniform_real_distribution<double> distribution_e(0.0,360.0*PI / 180.0); // directly in radian
 	uniform_real_distribution<double> distribution_e(0.0,360.0); 
 
