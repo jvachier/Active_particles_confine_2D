@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
 	double *y = (double *)malloc(Particles * sizeof(double)); // y-position
 
 	// parameters
-	const int N = 1E3; // number of iterations
+	const int N = 1E4; // number of iterations
 	const int L = 1.0; // particle size
 
 	// initialization of the random generator
@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
 	// Distributions Gaussian
 	normal_distribution<double> Gaussdistribution(0.0, 1.0);
 	// Distribution Uniform for initialization
-	uniform_real_distribution<double> distribution(-1000.0,1000.0);
+	uniform_real_distribution<double> distribution(-10.0,10.0);
 	//uniform_real_distribution<double> distribution_e(0.0,360.0*PI / 180.0); // directly in radian
 	uniform_real_distribution<double> distribution_e(0.0,360.0); 
 
