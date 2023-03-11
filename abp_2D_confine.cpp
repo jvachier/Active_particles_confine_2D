@@ -91,6 +91,7 @@ void check_nooverlap(
 	default_random_engine &generator, uniform_real_distribution<double> &distribution
 )
 {
+	int count = 0;
 #pragma omp parallel for simd num_threads(N_thread)
 	for (int k = 0; k < Particles; k++)
 	{
@@ -99,13 +100,91 @@ void check_nooverlap(
 			if (k != j)
 			{
 				R = sqrt((x[j]-x[k])*(x[j]-x[k]) + (y[j]-y[k])*(y[j]-y[k]));
+				count = 0;
 				while (R < 1.5 * L)
 				{
 					x[j] = distribution(generator);
 					y[j] = distribution(generator);
 					R = sqrt((x[j]-x[k])*(x[j]-x[k]) + (y[j]-y[k])*(y[j]-y[k]));
+					count += 1;
+					if (count > 3)
+					{
+						printf("Number of particle too high\n");
+						exit(0);
+					}
 				}
 			}
+		}
+	}
+
+}
+
+void reflective_boundary_conditions(
+	double *x, double *y, int Particles,
+	double Wall, int L
+)
+{
+	double D_AW_x = 0.0;
+	double D_AW_y = 0.0;
+#pragma omp parallel for simd num_threads(N_thread)	
+	for (int k = 0; k < Particles; k++)
+	{
+		D_AW_x = 0.0;
+		D_AW_y = 0.0;
+		if (abs(x[k]) > Wall)
+		{
+			D_AW_x = abs(x[k] + Wall); 
+
+			if (D_AW_x > 4.0 * L )
+			{
+				if (x[k] > Wall)
+				{
+					x[k] = Wall - 2.0 * L;
+				}
+				else if (x[k] < -Wall)
+				{
+					x[k] = 2.0 * L - Wall;
+				}
+			}
+			else
+			{
+				if (x[k] > Wall)
+				{
+					x[k] -= 2.0 * D_AW_x;
+				}
+				else if (x[k] < -Wall)
+				{
+					x[k] += 2.0 * D_AW_x;
+				}
+			}
+			
+		}
+		if (abs(y[k]) > Wall)
+		{
+			D_AW_y = abs(y[k] + Wall);
+			if (D_AW_y > 4.0 * L )
+			{
+				if (y[k] > Wall)
+				{
+					y[k] = Wall - 2.0 * L;
+				}
+				else if (y[k] < -Wall)
+				{
+					y[k] = 2.0 * L - Wall;
+				}
+			}
+			else
+			{
+				if (y[k] > Wall)
+				{
+					y[k] -= 2.0 * D_AW_y;
+				}
+				else if (y[k] < -Wall)
+				{
+					y[k] += 2.0 * D_AW_y;
+				}
+			}
+			
 		}
 	}
 
@@ -140,16 +219,16 @@ int main(int argc, char *argv[])
 
 	// read the parameters from the file
 	double epsilon, delta, Dt, De, vs;
-	double F, R;
+	double F, R, Wall;
 	int Particles;
-	fscanf(parameter, "%lf\t%lf\t%d\t%lf\t%lf\t%lf\n", &epsilon, &delta, &Particles, &Dt, &De, &vs);
-	printf("%lf\t%lf\t%d\t%lf\t%lf\t%lf\n", epsilon, delta, Particles, Dt, De, vs);
+	fscanf(parameter, "%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\n", &epsilon, &delta, &Particles, &Dt, &De, &vs, &Wall);
+	printf("%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\n", epsilon, delta, Particles, Dt, De, vs, Wall);
 
 	double *x = (double *)malloc(Particles * sizeof(double)); // x-position 
 	double *y = (double *)malloc(Particles * sizeof(double)); // y-position
 
 	// parameters
-	const int N = 1E4; // number of iterations
+	const int N = 3E6; // number of iterations
 	const int L = 1.0; // particle size
 
 	// initialization of the random generator
@@ -160,7 +239,7 @@ int main(int argc, char *argv[])
 	// Distributions Gaussian
 	normal_distribution<double> Gaussdistribution(0.0, 1.0);
 	// Distribution Uniform for initialization
-	uniform_real_distribution<double> distribution(-10.0,10.0);
+	uniform_real_distribution<double> distribution(-Wall,Wall);
 	//uniform_real_distribution<double> distribution_e(0.0,360.0*PI / 180.0); // directly in radian
 	uniform_real_distribution<double> distribution_e(0.0,360.0); 
 
@@ -195,6 +274,7 @@ int main(int argc, char *argv[])
 		R, L,
 		generator, distribution
 	);
+	printf("Initialization done.\n");
 
 	// Time evoultion
 	int time;
@@ -207,7 +287,11 @@ int main(int argc, char *argv[])
 			r, R, F, prefactor_interaction,
 			generator, Gaussdistribution, distribution_e
 		);
-		if(time % 10 == 0 && time >= 0)
+		reflective_boundary_conditions(
+			x, y, Particles,
+			Wall, L
+		);
+		if(time % 100 == 0 && time >= 0)
 		{
 			print_file(
 				x, y,
