@@ -219,7 +219,9 @@ int main(int argc, char *argv[])
 
 	// read the parameters from the file
 	double epsilon, delta, Dt, De, vs;
-	double F, R, Wall;
+	double F = 0.0;
+	double R = 0.0;
+	double Wall;
 	int Particles;
 	fscanf(parameter, "%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\n", &epsilon, &delta, &Particles, &Dt, &De, &vs, &Wall);
 	printf("%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\n", epsilon, delta, Particles, Dt, De, vs, Wall);
@@ -243,12 +245,10 @@ int main(int argc, char *argv[])
 	//uniform_real_distribution<double> distribution_e(0.0,360.0*PI / 180.0); // directly in radian
 	uniform_real_distribution<double> distribution_e(0.0,360.0); 
 
-	double xi_px; // noise for x-position
-	double xi_py; // noise for y-position
-	double xi_e; // noise ortientation
-	double x_x; // used to initialize
-	double y_y; // used to initialize
-	int i, j, k;
+	double xi_px = 0.0; // noise for x-position
+	double xi_py = 0.0; // noise for y-position
+	double xi_e = 0.0; // noise ortientation
+
 
 	double phi = 0.0;
 	double prefactor_e = sqrt(2.0 * delta * De);
