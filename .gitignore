@@ -9,3 +9,6 @@
 
 # Ignore all executable files
 *.o
+
+# Ignore jupyter checkpoints
+.ipynb_checkpoints
