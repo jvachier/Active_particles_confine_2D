@@ -10,6 +10,7 @@
 using namespace std;
 
 #include "initialization.h"
+
 void initialization(
 	double *x, double *y, int Particles,
 	default_random_engine &generator, uniform_real_distribution<double> &distribution
