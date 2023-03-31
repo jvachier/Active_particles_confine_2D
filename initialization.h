@@ -1,5 +1,5 @@
-// #ifndef INITIALIZATION_H
-// #define INITIALIZATION_H
+#ifndef INITIALIZATION_H
+#define INITIALIZATION_H
 
 //using namespace std;
 
@@ -14,4 +14,4 @@ void check_nooverlap(
 	std::default_random_engine, std::uniform_real_distribution<double>
 );
 
-// #endif
+#endif
