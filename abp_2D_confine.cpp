@@ -229,7 +229,6 @@ int main(int argc, char *argv[])
 	double *x = (double *)malloc(Particles * sizeof(double)); // x-position 
 	double *y = (double *)malloc(Particles * sizeof(double)); // y-position
 
-	printf('test');
 
 	// parameters
 	const int N = 1E6; // number of iterations
