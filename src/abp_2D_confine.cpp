@@ -208,12 +208,12 @@ int main(int argc, char *argv[])
 	FILE *datacsv;
 	FILE *parameter;
 	parameter = fopen("parameter.txt", "r");
-	datacsv = fopen("./simulation_test.csv", "w");
+	datacsv = fopen("./data/simulation_test.csv", "w");
 
 	// check if the file parameter is exist
 	if (parameter == NULL)
 	{
-		printf("no such file.");
+		printf("no such file: parameter.txt.");
 		return 0;
 	}
 
@@ -231,7 +231,7 @@ int main(int argc, char *argv[])
 
 
 	// parameters
-	const int N = 1E6; // number of iterations
+	const int N = 1E4; // number of iterations
 	const int L = 1.0; // particle size
 
 	// initialization of the random generator
