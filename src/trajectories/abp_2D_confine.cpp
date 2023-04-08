@@ -16,7 +16,7 @@
 #include <tuple> //to output multiple components of a function
 
 #define PI 3.141592653589793
-#define N_thread 6
+#define N_thread 2
 
 using namespace std;
 
@@ -208,7 +208,7 @@ int main(int argc, char *argv[])
 	FILE *datacsv;
 	FILE *parameter;
 	parameter = fopen("parameter.txt", "r");
-	datacsv = fopen("./simulation_test.csv", "w");
+	datacsv = fopen("/Active_particles_confine_2D/src/data/simulation_test.csv", "w");
 
 	// check if the file parameter is exist
 	if (parameter == NULL)
@@ -231,7 +231,7 @@ int main(int argc, char *argv[])
 
 
 	// parameters
-	const int N = 1E6; // number of iterations
+	const int N = 1E4; // number of iterations
 	const int L = 1.0; // particle size
 
 	// initialization of the random generator
