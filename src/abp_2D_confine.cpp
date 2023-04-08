@@ -16,7 +16,7 @@
 #include <tuple> //to output multiple components of a function
 
 #define PI 3.141592653589793
-#define N_thread 2
+#define N_thread 6
 
 using namespace std;
 
@@ -208,12 +208,12 @@ int main(int argc, char *argv[])
 	FILE *datacsv;
 	FILE *parameter;
 	parameter = fopen("parameter.txt", "r");
-	datacsv = fopen("/Active_particles_confine_2D/src/data/simulation_test.csv", "w");
+	datacsv = fopen("./data/simulation_test.csv", "w");
 
 	// check if the file parameter is exist
 	if (parameter == NULL)
 	{
-		printf("no such file.");
+		printf("no such file: parameter.txt.");
 		return 0;
 	}
 
