@@ -1,6 +1,6 @@
 # Ignore Mac system files
 .DS_store
-
+.dSYM
 # Ignore all csv files
 *.csv
 
