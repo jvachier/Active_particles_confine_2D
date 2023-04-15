@@ -116,7 +116,6 @@ void check_nooverlap(
 			}
 		}
 	}
-
 }
 
 void reflective_boundary_conditions(
@@ -208,20 +207,18 @@ int main(int argc, char *argv[])
 	FILE *datacsv;
 	FILE *parameter;
 	parameter = fopen("parameter.txt", "r");
-	datacsv = fopen("./data/simulation_test.csv", "w");
+	datacsv = fopen("./simulation_test.csv", "w");
 
 	// check if the file parameter is exist
 	if (parameter == NULL)
 	{
-		printf("no such file: parameter.txt.");
+		printf("no such file.");
 		return 0;
 	}
 
 	// read the parameters from the file
 	double epsilon, delta, Dt, De, vs;
-	double F = 0.0;
-	double R = 0.0;
-	double Wall;
+	double F, R, Wall;
 	int Particles;
 	fscanf(parameter, "%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\n", &epsilon, &delta, &Particles, &Dt, &De, &vs, &Wall);
 	printf("%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\n", epsilon, delta, Particles, Dt, De, vs, Wall);
@@ -229,9 +226,8 @@ int main(int argc, char *argv[])
 	double *x = (double *)malloc(Particles * sizeof(double)); // x-position 
 	double *y = (double *)malloc(Particles * sizeof(double)); // y-position
 
-
 	// parameters
-	const int N = 1E4; // number of iterations
+	const int N = 1E5; // number of iterations
 	const int L = 1.0; // particle size
 
 	// initialization of the random generator
@@ -246,10 +242,12 @@ int main(int argc, char *argv[])
 	//uniform_real_distribution<double> distribution_e(0.0,360.0*PI / 180.0); // directly in radian
 	uniform_real_distribution<double> distribution_e(0.0,360.0); 
 
-	double xi_px = 0.0; // noise for x-position
-	double xi_py = 0.0; // noise for y-position
-	double xi_e = 0.0; // noise ortientation
-
+	double xi_px; // noise for x-position
+	double xi_py; // noise for y-position
+	double xi_e; // noise ortientation
+	double x_x; // used to initialize
+	double y_y; // used to initialize
+	int i, j, k;
 
 	double phi = 0.0;
 	double prefactor_e = sqrt(2.0 * delta * De);
@@ -301,8 +299,6 @@ int main(int argc, char *argv[])
 			);
 		}
 	}
-	// Compute the first and second moments
-	//auto [r_mean, rr_mean] = moments(x, Taj);
 
 
 	
