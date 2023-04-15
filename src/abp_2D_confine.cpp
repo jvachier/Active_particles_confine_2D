@@ -16,9 +16,8 @@
 #include <tuple> //to output multiple components of a function
 
 #define PI 3.141592653589793
-#define N_thread 4
+#define N_thread 6
 
-#include "initialization.h"
 using namespace std;
 
 void update_position(
@@ -72,53 +71,52 @@ void print_file(
 	}
 }
 
-// void initialization(
-// 	double *x, double *y, int Particles,
-// 	default_random_engine &generator, uniform_real_distribution<double> &distribution
-// )
-// {
-// #pragma omp parallel for simd num_threads(N_thread)
-// 	for (int k = 0; k < Particles; k++)
-// 	{
-// 		x[k] = distribution(generator);
-// 		y[k] = distribution(generator);
-// 	}
-// }
+void initialization(
+	double *x, double *y, int Particles,
+	default_random_engine &generator, uniform_real_distribution<double> &distribution
+)
+{
+#pragma omp parallel for simd num_threads(N_thread)
+	for (int k = 0; k < Particles; k++)
+	{
+		x[k] = distribution(generator);
+		y[k] = distribution(generator);
+	}
+}
 
 
-// void check_nooverlap(
-// 	double *x, double *y, int Particles,
-// 	double R, int L,
-// 	default_random_engine &generator, uniform_real_distribution<double> &distribution
-// )
-// {
-// 	int count = 0;
-// #pragma omp parallel for simd num_threads(N_thread)
-// 	for (int k = 0; k < Particles; k++)
-// 	{
-// 		for (int j = 0; j < Particles; j++)
-// 		{
-// 			if (k != j)
-// 			{
-// 				R = sqrt((x[j]-x[k])*(x[j]-x[k]) + (y[j]-y[k])*(y[j]-y[k]));
-// 				count = 0;
-// 				while (R < 1.5 * L)
-// 				{
-// 					x[j] = distribution(generator);
-// 					y[j] = distribution(generator);
-// 					R = sqrt((x[j]-x[k])*(x[j]-x[k]) + (y[j]-y[k])*(y[j]-y[k]));
-// 					count += 1;
-// 					if (count > 3)
-// 					{
-// 						printf("Number of particle too high\n");
-// 						exit(0);
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-
-// }
+void check_nooverlap(
+	double *x, double *y, int Particles,
+	double R, int L,
+	default_random_engine &generator, uniform_real_distribution<double> &distribution
+)
+{
+	int count = 0;
+#pragma omp parallel for simd num_threads(N_thread)
+	for (int k = 0; k < Particles; k++)
+	{
+		for (int j = 0; j < Particles; j++)
+		{
+			if (k != j)
+			{
+				R = sqrt((x[j]-x[k])*(x[j]-x[k]) + (y[j]-y[k])*(y[j]-y[k]));
+				count = 0;
+				while (R < 1.5 * L)
+				{
+					x[j] = distribution(generator);
+					y[j] = distribution(generator);
+					R = sqrt((x[j]-x[k])*(x[j]-x[k]) + (y[j]-y[k])*(y[j]-y[k]));
+					count += 1;
+					if (count > 3)
+					{
+						printf("Number of particle too high\n");
+						exit(0);
+					}
+				}
+			}
+		}
+	}
+}
 
 void reflective_boundary_conditions(
 	double *x, double *y, int Particles,
@@ -229,7 +227,7 @@ int main(int argc, char *argv[])
 	double *y = (double *)malloc(Particles * sizeof(double)); // y-position
 
 	// parameters
-	const int N = 1E4; // number of iterations
+	const int N = 1E5; // number of iterations
 	const int L = 1.0; // particle size
 
 	// initialization of the random generator
@@ -301,8 +299,6 @@ int main(int argc, char *argv[])
 			);
 		}
 	}
-	// Compute the first and second moments
-	//auto [r_mean, rr_mean] = moments(x, Taj);
 
 
 	
