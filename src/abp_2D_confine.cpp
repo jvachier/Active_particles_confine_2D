@@ -9,7 +9,8 @@
 
 #include <iostream>
 #include <random>
-#include <string>
+#include <cstring>
+#include <stdio.h>
 #include <cmath>
 #include <time.h>
 #include <omp.h> //import library to use pragma
@@ -225,7 +226,7 @@ int main(int argc, char *argv[])
 	FILE *datacsv;
 	FILE *parameter;
 	parameter = fopen("parameter.txt", "r");
-	datacsv = fopen("./simulation_test.csv", "w");
+	datacsv = fopen("./data/simulation_test.csv", "w");
 
 	// check if the file parameter is exist
 	if (parameter == NULL)
@@ -238,6 +239,27 @@ int main(int argc, char *argv[])
 	double epsilon, delta, Dt, De, vs;
 	double F, R, Wall;
 	int Particles;
+	char name[100];
+	char key1[] = "circular";
+	char key2[] = "squared";
+
+	bool flag = false;
+
+	printf("Select confinement geometry, either squared or circular:");
+	scanf("%s",&name);
+
+	while(flag == false){
+		if ((strcmp(name,key1) == 0) or (strcmp(name,key2) == 0)){
+			flag = true;
+		}
+		else{
+			printf("You have not selected the correct, please select again\n");
+			printf("Select confinement geometry, either squared or circular:");
+			scanf("%s",&name);
+			flag = false;
+		}
+	}
+
 	fscanf(parameter, "%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\n", &epsilon, &delta, &Particles, &Dt, &De, &vs, &Wall);
 	printf("%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\n", epsilon, delta, Particles, Dt, De, vs, Wall);
 
@@ -304,10 +326,20 @@ int main(int argc, char *argv[])
 			r, R, F, prefactor_interaction,
 			generator, Gaussdistribution, distribution_e
 		);
-		reflective_boundary_conditions(
-			x, y, Particles,
-			Wall, L
-		);
+		if (strcmp(name,key1) == 0){
+			circular_reflective_boundary_conditions(
+				x, y, Particles,
+				Wall, L
+			);
+		}
+		if (strcmp(name,key2) == 0){
+			reflective_boundary_conditions(
+				x, y, Particles,
+				Wall, L
+			);
+		}
+		
+		
 		if(time % 100 == 0 && time >= 0)
 		{
 			print_file(
