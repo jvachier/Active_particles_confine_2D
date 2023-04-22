@@ -259,9 +259,6 @@ int main(int argc, char *argv[])
 			flag = false;
 		}
 	}
-
-	fprintf(datacsv,"Boundary,%s\n",name);
-
 	fscanf(parameter, "%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\n", &epsilon, &delta, &Particles, &Dt, &De, &vs, &Wall);
 	printf("%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\n", epsilon, delta, Particles, Dt, De, vs, Wall);
 
@@ -302,7 +299,7 @@ int main(int argc, char *argv[])
 
 	clock_t tStart = clock(); // check time for one trajectory
 
-	fprintf(datacsv,"Particles,x-position,y-position,time\n");
+	fprintf(datacsv,"Particles,x-position,y-position,time,%s\n",name);
 
 	// initialization position and activity
 	initialization(
