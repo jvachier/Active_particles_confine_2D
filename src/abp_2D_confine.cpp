@@ -260,6 +260,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	fprintf(datacsv,"Boundary,%s\n",name);
+
 	fscanf(parameter, "%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\n", &epsilon, &delta, &Particles, &Dt, &De, &vs, &Wall);
 	printf("%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\n", epsilon, delta, Particles, Dt, De, vs, Wall);
 
