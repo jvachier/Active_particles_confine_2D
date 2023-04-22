@@ -1,1 +1,2 @@
-# Active_particles_confine_2D
+# Active particles confined 2D
+Active interactive particles evolving differnet geometries, either circular or squared, in 2D. The dynamics is given by two Langevins equations, one for the position $r(x,y)$ of the particles and for its orientation $\phi$.
