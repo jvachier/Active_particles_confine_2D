@@ -16,6 +16,10 @@
 #include <omp.h> //import library to use pragma
 #include <tuple> //to output multiple components of a function
 
+#include "print_file.h"
+#include "reflective_boundary_conditions.h"
+#include "circular_reflective_boundary_conditions.h"
+
 #define PI 3.141592653589793
 #define N_thread 6
 
@@ -57,18 +61,6 @@ void update_position(
 		}
 		x[k] = x[k] + vs * cos(phi) * delta + F * x[k] * delta + xi_px * prefactor_xi_px;
 		y[k] = y[k] + vs * sin(phi) * delta + F * y[k] * delta  + xi_py * prefactor_xi_py;
-	}
-}
-
-void print_file(
-	double *x, double *y,
-	int Particles, int time,
-	FILE *datacsv
-)
-{
-	for(int k = 0; k < Particles; k++)
-	{
-		fprintf(datacsv,"Particles%d,%lf,%lf,%d\n",k,x[k],y[k],time);
 	}
 }
 
@@ -119,95 +111,6 @@ void check_nooverlap(
 	}
 }
 
-void circular_reflective_boundary_conditions(
-	double *x, double *y, int Particles,
-	double Wall, int L
-)
-{
-	double distance_squared = 0.0, Wall_squared = Wall * Wall;
-#pragma omp parallel for simd num_threads(N_thread)	
-	for (int k = 0; k < Particles; k++)
-	{
-		distance_squared = x[k]*x[k] + y[k]*y[k];
-		if (distance_squared > Wall_squared)
-		{
-			x[k] = (sqrt(Wall_squared) / sqrt(distance_squared)) * x[k];
-			y[k] = (sqrt(Wall_squared) / sqrt(distance_squared)) * y[k];
-		}
-	}
-}
-
-void reflective_boundary_conditions(
-	double *x, double *y, int Particles,
-	double Wall, int L
-)
-{
-	double D_AW_x = 0.0;
-	double D_AW_y = 0.0;
-#pragma omp parallel for simd num_threads(N_thread)	
-	for (int k = 0; k < Particles; k++)
-	{
-		D_AW_x = 0.0;
-		D_AW_y = 0.0;
-		if (abs(x[k]) > Wall)
-		{
-			D_AW_x = abs(x[k] + Wall); 
-
-			if (D_AW_x > 4.0 * L )
-			{
-				if (x[k] > Wall)
-				{
-					x[k] = Wall - 2.0 * L;
-				}
-				else if (x[k] < -Wall)
-				{
-					x[k] = 2.0 * L - Wall;
-				}
-			}
-			else
-			{
-				if (x[k] > Wall)
-				{
-					x[k] -= 2.0 * D_AW_x;
-				}
-				else if (x[k] < -Wall)
-				{
-					x[k] += 2.0 * D_AW_x;
-				}
-			}
-			
-		}
-		if (abs(y[k]) > Wall)
-		{
-			D_AW_y = abs(y[k] + Wall);
-			if (D_AW_y > 4.0 * L )
-			{
-				if (y[k] > Wall)
-				{
-					y[k] = Wall - 2.0 * L;
-				}
-				else if (y[k] < -Wall)
-				{
-					y[k] = 2.0 * L - Wall;
-				}
-			}
-			else
-			{
-				if (y[k] > Wall)
-				{
-					y[k] -= 2.0 * D_AW_y;
-				}
-				else if (y[k] < -Wall)
-				{
-					y[k] += 2.0 * D_AW_y;
-				}
-			}
-			
-		}
-	}
-
-}
-
 int main(int argc, char *argv[])
 {
 	// File
@@ -254,7 +157,7 @@ int main(int argc, char *argv[])
 	double *y = (double *)malloc(Particles * sizeof(double)); // y-position
 
 	// parameters
-	const int N = 1E5; // number of iterations
+	const int N = 1E6; // number of iterations
 	const int L = 1.0; // particle size
 
 	// initialization of the random generator
