@@ -20,83 +20,13 @@
 #include "reflective_boundary_conditions.h"
 #include "circular_reflective_boundary_conditions.h"
 #include "initialization.h"
+#include "update_position.h"
+#include "check_nooverlap.h"
 
 #define PI 3.141592653589793
 #define N_thread 6
 
 using namespace std;
-
-void update_position(
-	double *x, double *y, double phi, double prefactor_e, int Particles, 
-	double delta, double De, double Dt, double xi_e, double xi_px, 
-	double xi_py, double vs, double prefactor_xi_px, double prefactor_xi_py,
-	double r, double R, double F, double prefactor_interaction,
-	default_random_engine &generator, normal_distribution<double> &Gaussdistribution, uniform_real_distribution<double> &distribution_e
-)
-{
-	double a = 0.0; // local variable - here check if no conflict elsewhere
-#pragma omp parallel for simd num_threads(N_thread)
-	for (int k = 0; k < Particles; k++)
-	{
-		xi_e = distribution_e(generator);
-		xi_px = Gaussdistribution(generator);
-		xi_py = Gaussdistribution(generator);
-
-		phi = (prefactor_e * xi_e); // be careful with radian and degree
-		F = 0.0;
-		for (int j = 0; j < Particles; j++)
-		{
-			if (k!=j) // see how to improved the nested if conditions
-			{
-				R = sqrt((x[j]-x[k])*(x[j]-x[k]) + (y[j]-y[k])*(y[j]-y[k]));
-				if (R < r)
-				{
-					a = prefactor_interaction / pow(R,14);
-					if (a > 1.0)
-					{
-						a = 0.5; // this value needs to be checked 
-					}
-					F += a;
-				}
-			}
-		}
-		x[k] = x[k] + vs * cos(phi) * delta + F * x[k] * delta + xi_px * prefactor_xi_px;
-		y[k] = y[k] + vs * sin(phi) * delta + F * y[k] * delta  + xi_py * prefactor_xi_py;
-	}
-}
-
-void check_nooverlap(
-	double *x, double *y, int Particles,
-	double R, int L,
-	default_random_engine &generator, uniform_real_distribution<double> &distribution
-)
-{
-	int count = 0;
-#pragma omp parallel for simd num_threads(N_thread)
-	for (int k = 0; k < Particles; k++)
-	{
-		for (int j = 0; j < Particles; j++)
-		{
-			if (k != j)
-			{
-				R = sqrt((x[j]-x[k])*(x[j]-x[k]) + (y[j]-y[k])*(y[j]-y[k]));
-				count = 0;
-				while (R < 1.5 * L)
-				{
-					x[j] = distribution(generator);
-					y[j] = distribution(generator);
-					R = sqrt((x[j]-x[k])*(x[j]-x[k]) + (y[j]-y[k])*(y[j]-y[k]));
-					count += 1;
-					if (count > 3)
-					{
-						printf("Number of particle too high\n");
-						exit(0);
-					}
-				}
-			}
-		}
-	}
-}
 
 int main(int argc, char *argv[])
 {
