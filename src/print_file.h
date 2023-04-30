@@ -8,5 +8,4 @@
 void print_file(
 	double *x, double *y,
 	int Particles, int time,
-	FILE *datacsv
-);
+	FILE *datacsv);

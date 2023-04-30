@@ -2,24 +2,22 @@
 
 using namespace std;
 
-
 void reflective_boundary_conditions(
 	double *x, double *y, int Particles,
-	double Wall, int L
-)
+	double Wall, int L)
 {
 	double D_AW_x = 0.0;
 	double D_AW_y = 0.0;
-#pragma omp parallel for simd num_threads(N_thread)	
+#pragma omp parallel for simd num_threads(N_thread)
 	for (int k = 0; k < Particles; k++)
 	{
 		D_AW_x = 0.0;
 		D_AW_y = 0.0;
 		if (abs(x[k]) > Wall)
 		{
-			D_AW_x = abs(x[k] + Wall); 
+			D_AW_x = abs(x[k] + Wall);
 
-			if (D_AW_x > 4.0 * L )
+			if (D_AW_x > 4.0 * L)
 			{
 				if (x[k] > Wall)
 				{
@@ -41,12 +39,11 @@ void reflective_boundary_conditions(
 					x[k] += 2.0 * D_AW_x;
 				}
 			}
-			
 		}
 		if (abs(y[k]) > Wall)
 		{
 			D_AW_y = abs(y[k] + Wall);
-			if (D_AW_y > 4.0 * L )
+			if (D_AW_y > 4.0 * L)
 			{
 				if (y[k] > Wall)
 				{
@@ -68,8 +65,6 @@ void reflective_boundary_conditions(
 					y[k] += 2.0 * D_AW_y;
 				}
 			}
-			
 		}
 	}
-
 }
