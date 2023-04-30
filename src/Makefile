@@ -1,8 +1,8 @@
 CC = g++-12
 CFLAGS = -Wall -g -fopenmp
 
-abp_2D_confine: abp_2D_confine.o print_file.o reflective_boundary_conditions.o circular_reflective_boundary_conditions.o
-	$(CC) $(CFLAGS) -o abp_2D_confine.out abp_2D_confine.o print_file.o reflective_boundary_conditions.o circular_reflective_boundary_conditions.o
+abp_2D_confine: abp_2D_confine.o print_file.o reflective_boundary_conditions.o circular_reflective_boundary_conditions.o initialization.o
+	$(CC) $(CFLAGS) -o abp_2D_confine.out abp_2D_confine.o print_file.o reflective_boundary_conditions.o circular_reflective_boundary_conditions.o initialization.o
 
 abp_2D_confine.o: abp_2D_confine.cpp
 	$(CC) -c abp_2D_confine.cpp
@@ -15,6 +15,9 @@ reflective_boundary_conditions.o: reflective_boundary_conditions.cpp
 
 circular_reflective_boundary_conditions.o: circular_reflective_boundary_conditions.cpp
 	$(CC) -c circular_reflective_boundary_conditions.cpp
+
+initialization.o: initialization.cpp
+	$(CC) -c initialization.cpp
 
 clean:
 	rm *.o

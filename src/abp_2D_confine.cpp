@@ -19,6 +19,7 @@
 #include "print_file.h"
 #include "reflective_boundary_conditions.h"
 #include "circular_reflective_boundary_conditions.h"
+#include "initialization.h"
 
 #define PI 3.141592653589793
 #define N_thread 6
@@ -63,20 +64,6 @@ void update_position(
 		y[k] = y[k] + vs * sin(phi) * delta + F * y[k] * delta  + xi_py * prefactor_xi_py;
 	}
 }
-
-void initialization(
-	double *x, double *y, int Particles,
-	default_random_engine &generator, uniform_real_distribution<double> &distribution
-)
-{
-#pragma omp parallel for simd num_threads(N_thread)
-	for (int k = 0; k < Particles; k++)
-	{
-		x[k] = distribution(generator);
-		y[k] = distribution(generator);
-	}
-}
-
 
 void check_nooverlap(
 	double *x, double *y, int Particles,
@@ -157,7 +144,7 @@ int main(int argc, char *argv[])
 	double *y = (double *)malloc(Particles * sizeof(double)); // y-position
 
 	// parameters
-	const int N = 1E6; // number of iterations
+	const int N = 1E5; // number of iterations
 	const int L = 1.0; // particle size
 
 	// initialization of the random generator
