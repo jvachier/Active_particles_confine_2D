@@ -5,8 +5,7 @@ using namespace std;
 void check_nooverlap(
 	double *x, double *y, int Particles,
 	double R, int L,
-	default_random_engine &generator, uniform_real_distribution<double> &distribution
-)
+	default_random_engine &generator, uniform_real_distribution<double> &distribution)
 {
 	int count = 0;
 #pragma omp parallel for simd num_threads(N_thread)
@@ -16,13 +15,13 @@ void check_nooverlap(
 		{
 			if (k != j)
 			{
-				R = sqrt((x[j]-x[k])*(x[j]-x[k]) + (y[j]-y[k])*(y[j]-y[k]));
+				R = sqrt((x[j] - x[k]) * (x[j] - x[k]) + (y[j] - y[k]) * (y[j] - y[k]));
 				count = 0;
 				while (R < 1.5 * L)
 				{
 					x[j] = distribution(generator);
 					y[j] = distribution(generator);
-					R = sqrt((x[j]-x[k])*(x[j]-x[k]) + (y[j]-y[k])*(y[j]-y[k]));
+					R = sqrt((x[j] - x[k]) * (x[j] - x[k]) + (y[j] - y[k]) * (y[j] - y[k]));
 					count += 1;
 					if (count > 3)
 					{

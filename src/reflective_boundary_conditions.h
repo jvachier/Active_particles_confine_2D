@@ -8,5 +8,4 @@
 
 void reflective_boundary_conditions(
 	double *x, double *y, int Particles,
-	double Wall, int L
-);
+	double Wall, int L);

@@ -54,23 +54,26 @@ int main(int argc, char *argv[])
 	bool flag = false;
 
 	printf("Select confinement geometry, either squared or circular:");
-	scanf("%s",&name);
+	scanf("%s", &name);
 
-	while(flag == false){
-		if ((strcmp(name,key1) == 0) or (strcmp(name,key2) == 0)){
+	while (flag == false)
+	{
+		if ((strcmp(name, key1) == 0) or (strcmp(name, key2) == 0))
+		{
 			flag = true;
 		}
-		else{
+		else
+		{
 			printf("You have not selected the correct, please select again\n");
 			printf("Select confinement geometry, either squared or circular:");
-			scanf("%s",&name);
+			scanf("%s", &name);
 			flag = false;
 		}
 	}
 	fscanf(parameter, "%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\n", &epsilon, &delta, &Particles, &Dt, &De, &vs, &Wall);
 	printf("%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\n", epsilon, delta, Particles, Dt, De, vs, Wall);
 
-	double *x = (double *)malloc(Particles * sizeof(double)); // x-position 
+	double *x = (double *)malloc(Particles * sizeof(double)); // x-position
 	double *y = (double *)malloc(Particles * sizeof(double)); // y-position
 
 	// parameters
@@ -85,15 +88,15 @@ int main(int argc, char *argv[])
 	// Distributions Gaussian
 	normal_distribution<double> Gaussdistribution(0.0, 1.0);
 	// Distribution Uniform for initialization
-	uniform_real_distribution<double> distribution(-Wall,Wall);
-	//uniform_real_distribution<double> distribution_e(0.0,360.0*PI / 180.0); // directly in radian
-	uniform_real_distribution<double> distribution_e(0.0,360.0); 
+	uniform_real_distribution<double> distribution(-Wall, Wall);
+	// uniform_real_distribution<double> distribution_e(0.0,360.0*PI / 180.0); // directly in radian
+	uniform_real_distribution<double> distribution_e(0.0, 360.0);
 
 	double xi_px; // noise for x-position
 	double xi_py; // noise for y-position
-	double xi_e; // noise ortientation
-	double x_x; // used to initialize
-	double y_y; // used to initialize
+	double xi_e;  // noise ortientation
+	double x_x;	  // used to initialize
+	double y_y;	  // used to initialize
 	int i, j, k;
 
 	double phi = 0.0;
@@ -103,23 +106,19 @@ int main(int argc, char *argv[])
 	double prefactor_interaction = epsilon * 48.0;
 	double r = 5.0 * L;
 
-
-
 	clock_t tStart = clock(); // check time for one trajectory
 
-	fprintf(datacsv,"Particles,x-position,y-position,time,%s\n",name);
+	fprintf(datacsv, "Particles,x-position,y-position,time,%s\n", name);
 
 	// initialization position and activity
 	initialization(
 		x, y, Particles,
-		generator, distribution
-	);
+		generator, distribution);
 
 	check_nooverlap(
 		x, y, Particles,
 		R, L,
-		generator, distribution
-	);
+		generator, distribution);
 	printf("Initialization done.\n");
 
 	// Time evoultion
@@ -127,38 +126,32 @@ int main(int argc, char *argv[])
 	for (time = 0; time < N; time++)
 	{
 		update_position(
-			x, y, phi, prefactor_e, Particles, 
-			delta, De, Dt, xi_e, xi_px, 
+			x, y, phi, prefactor_e, Particles,
+			delta, De, Dt, xi_e, xi_px,
 			xi_py, vs, prefactor_xi_px, prefactor_xi_py,
 			r, R, F, prefactor_interaction,
-			generator, Gaussdistribution, distribution_e
-		);
-		if (strcmp(name,key1) == 0){
+			generator, Gaussdistribution, distribution_e);
+		if (strcmp(name, key1) == 0)
+		{
 			circular_reflective_boundary_conditions(
 				x, y, Particles,
-				Wall, L
-			);
+				Wall, L);
 		}
-		if (strcmp(name,key2) == 0){
+		if (strcmp(name, key2) == 0)
+		{
 			reflective_boundary_conditions(
 				x, y, Particles,
-				Wall, L
-			);
+				Wall, L);
 		}
-		
-		
-		if(time % 100 == 0 && time >= 0)
+
+		if (time % 100 == 0 && time >= 0)
 		{
 			print_file(
 				x, y,
 				Particles, time,
-				datacsv
-			);
+				datacsv);
 		}
 	}
-
-
-	
 
 	printf("Time taken: %.2fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC); // time for one trajectory
 
