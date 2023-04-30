@@ -5,8 +5,9 @@ Active interactive particles evolve in different geometries, such as circular or
 
 $$
 \begin{align}
-\frac{d}{dt}\bm{\tilde{r}} &= \tilde{v_s}\bm{\tilde{e}} + \sqrt{2\tilde{D}_t}\bm{\tilde{\xi_t}}\,,\\
-\frac{d}{dt}\phi &= \sqrt{2\tilde{D}_e}\bm{\tilde{\xi_e}}\,,
+\frac{d}{dt}\mathbf{\tilde{r}} &= \tilde{v_s}\mathbf{\hat{e}} + \sqrt{2\tilde{D}_t}\tilde{\mathbf{\xi}_t}\,\\
+\frac{d}{dt}\phi &= \sqrt{2\tilde{D}_e}\tilde{\mathbf{\xi}_e}\,
 \end{align}
 $$
-where $\bm{\tilde{e}} = (\cos(\phi),\sin(\phi))^{T}$, $\langle \xi_{t_i}(t')\xi_{t_j}(t) \rangle = \delta_{ij}\delta(t'-t)$ and $\langle \xi_{e_i}(t')\xi_{e_j}(t) \rangle = \delta_{ij}\delta(t'-t)$ two Gaussian white noises.
+
+where $\mathbf{\hat{e}} = (\cos(\phi),\sin(\phi))^{T}$, $\langle \xi_{t_i}(t')\xi_{t_j}(t) \rangle = \delta_{ij}\delta(t'-t)$ and $\langle \xi_{e_i}(t')\xi_{e_j}(t) \rangle = \delta_{ij}\delta(t'-t)$ two Gaussian white noises.
