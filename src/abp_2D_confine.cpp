@@ -214,7 +214,7 @@ int main(int argc, char *argv[])
 	FILE *datacsv;
 	FILE *parameter;
 	parameter = fopen("parameter.txt", "r");
-	datacsv = fopen("./data/simulation_test.csv", "w");
+	datacsv = fopen("./data/simulation.csv", "w");
 
 	// check if the file parameter is exist
 	if (parameter == NULL)
