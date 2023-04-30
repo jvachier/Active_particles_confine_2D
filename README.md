@@ -9,4 +9,4 @@ $$
 \frac{d}{dt}\phi &= \sqrt{2\tilde{D}_e}\bm{\tilde{\xi_e}}\,,
 \end{align}
 $$
-where $\bm{\tilde{e}} = (\cos(\phi),\sin(\phi))^{T}$ and with
+where $\bm{\tilde{e}} = (\cos(\phi),\sin(\phi))^{T}$, $\langle \xi_{t_i}(t')\xi_{t_j}(t) \rangle = \delta_{ij}\delta(t'-t)$ and $\langle \xi_{e_i}(t')\xi_{e_j}(t) \rangle = \delta_{ij}\delta(t'-t)$ two Gaussian white noises.
