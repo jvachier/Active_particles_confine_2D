@@ -208,18 +208,6 @@ void reflective_boundary_conditions(
 
 }
 
-tuple<double, double> moments(double *x, int Particles)
-{
-	double first = 0.0;
-	double second = 0.0;
-	for (int k = 0; k < Particles; k++)
-	{
-		second += x[k] * x[k];
-		first += x[k];
-	}
-	return {first, second};
-}
-
 int main(int argc, char *argv[])
 {
 	// File
