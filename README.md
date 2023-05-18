@@ -1,7 +1,7 @@
 # Active particles confined 2D
 The aim of this project is to build simulations describings the motion of active interacting particles under confinement in 2D. These simulations are based on Langevin equations and used the Euler-Mayurama algorithm. Two types of geometries are used: either squared or circular.
 
-Active interactive particles evolve in different geometries, such as circular or squared. The dynamics is given by two Langevins equations, one for the position $\mathbf{\tilde{r}}(\tilde{x},\tilde{y})$ of the particles and for its orientation $\phi$
+Active interactive particles evolve in different geometries, such as circular or squared. The dynamics is given by two Langevins equations, one for the position $\mathbf{\tilde{r}}(\tilde{x},\tilde{y})$ of the particles and one for its orientation $\phi$
 
 $$
 \begin{align}
