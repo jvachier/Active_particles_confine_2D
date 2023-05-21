@@ -1,4 +1,4 @@
-CC = g++-12
+CC = g++-13
 CFLAGS = -Wall -g -fopenmp
 
 abp_2D_confine: abp_2D_confine.o print_file.o reflective_boundary_conditions.o circular_reflective_boundary_conditions.o initialization.o update_position.o check_nooverlap.o

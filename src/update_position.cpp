@@ -29,7 +29,7 @@ void update_position(
 					a = prefactor_interaction / pow(R, 14);
 					if (a > 1.0)
 					{
-						a = 0.5; // this value needs to be checked
+						a = 1.0; // this value needs to be checked
 					}
 					F += a;
 				}
