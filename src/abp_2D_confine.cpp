@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 	double *y = (double *)malloc(Particles * sizeof(double)); // y-position
 
 	// parameters
-	const int N = 1E5; // number of iterations
+	const int N = 1E6; // number of iterations
 	const int L = 1.0; // particle size
 
 	// initialization of the random generator
