@@ -11,3 +11,7 @@ $$
 $$
 
 where $\mathbf{\hat{e}} = (\cos(\phi),\sin(\phi))^{T}$ is the orientational unit vector, $\tilde{v_s}$ is the self-propulsion, $\tilde{D_{t}}$ and $\tilde{D_{e}}$ are the translational and rotational diffusivities, respectively. Moreover, $\langle \tilde{\xi_{t_i}}(\tilde{t}')\tilde{\xi_{t_j}}(\tilde{t}) \rangle = \delta_{ij}\delta(\tilde{t}'-\tilde{t})$ and $\langle \tilde{\xi_{e_i}}(\tilde{t}')\tilde{\xi_{e_j}}(\tilde{t}) \rangle = \delta_{ij}\delta(\tilde{t}'-\tilde{t})$ are two Gaussian white noises.
+
+
+https://github.com/jvachier/Active_particles_confine_2D/assets/89128100/65d5d51c-8ed2-4c9c-898a-dc47101a5160
+
