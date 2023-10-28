@@ -9,7 +9,7 @@ void reflective_boundary_conditions(
 	double D_AW_x = 0.0;
 	double D_AW_y = 0.0;
 	double Wall_L = Wall - L/2.0;
-#pragma omp parallel for simd num_threads(N_thread)
+#pragma omp parallel for simd
 	for (int k = 0; k < Particles; k++)
 	{
 		D_AW_x = 0.0;
