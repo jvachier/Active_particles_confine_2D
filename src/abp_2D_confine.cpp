@@ -43,9 +43,11 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
+	omp_set_num_threads(N_thread);
+
 	// read the parameters from the file
 	double epsilon, delta, Dt, De, vs;
-	double F, R, Wall;
+	double Wall;
 	int Particles;
 	char name[100];
 	char key1[] = "circular";
@@ -54,7 +56,7 @@ int main(int argc, char *argv[])
 	bool flag = false;
 
 	printf("Select confinement geometry, either squared or circular:");
-	scanf("%s", &name);
+	scanf("%s", name);
 
 	while (flag == false)
 	{
@@ -66,7 +68,7 @@ int main(int argc, char *argv[])
 		{
 			printf("You have not selected the correct, please select again\n");
 			printf("Select confinement geometry, either squared or circular:");
-			scanf("%s", &name);
+			scanf("%s", name);
 			flag = false;
 		}
 	}
@@ -77,7 +79,7 @@ int main(int argc, char *argv[])
 	double *y = (double *)malloc(Particles * sizeof(double)); // y-position
 
 	// parameters
-	const int N = 1E6; // number of iterations
+	const int N = 1E3; // number of iterations
 	const int L = 1.0; // particle size
 
 	// initialization of the random generator
@@ -92,12 +94,9 @@ int main(int argc, char *argv[])
 	// uniform_real_distribution<double> distribution_e(0.0,360.0*PI / 180.0); // directly in radian
 	uniform_real_distribution<double> distribution_e(0.0, 360.0);
 
-	double xi_px; // noise for x-position
-	double xi_py; // noise for y-position
-	double xi_e;  // noise ortientation
-	double x_x;	  // used to initialize
-	double y_y;	  // used to initialize
-	int i, j, k;
+	double xi_px = 0.0; // noise for x-position
+	double xi_py = 0.0; // noise for y-position
+	double xi_e = 0.0;  // noise ortientation
 
 	double phi = 0.0;
 	double prefactor_e = sqrt(2.0 * delta * De);
@@ -116,8 +115,7 @@ int main(int argc, char *argv[])
 		generator, distribution);
 
 	check_nooverlap(
-		x, y, Particles,
-		R, L,
+		x, y, Particles, L,
 		generator, distribution);
 	printf("Initialization done.\n");
 
@@ -129,7 +127,7 @@ int main(int argc, char *argv[])
 			x, y, phi, prefactor_e, Particles,
 			delta, De, Dt, xi_e, xi_px,
 			xi_py, vs, prefactor_xi_px, prefactor_xi_py,
-			r, R, F, prefactor_interaction,
+			r, prefactor_interaction,
 			generator, Gaussdistribution, distribution_e);
 		if (strcmp(name, key1) == 0)
 		{

@@ -6,11 +6,12 @@ void update_position(
 	double *x, double *y, double phi, double prefactor_e, int Particles,
 	double delta, double De, double Dt, double xi_e, double xi_px,
 	double xi_py, double vs, double prefactor_xi_px, double prefactor_xi_py,
-	double r, double R, double F, double prefactor_interaction,
+	double r, double prefactor_interaction,
 	default_random_engine &generator, normal_distribution<double> &Gaussdistribution, uniform_real_distribution<double> &distribution_e)
 {
 	double a = 0.0; // local variable - here check if no conflict elsewhere
-#pragma omp parallel for simd num_threads(N_thread)
+	double F = 0.0, R = 0.0;
+#pragma omp parallel for simd 
 	for (int k = 0; k < Particles; k++)
 	{
 		xi_e = distribution_e(generator);
