@@ -3,8 +3,6 @@
  * Purpose: ABP 2D confine in a square using an Euler-Mayurama algorithm
  * Language: C++
  * Date: 2023
- * Compilation line to use pragma: g++ name.cpp -fopenmp -o name.o (on mac run g++-12 ; 12 latest version obtain using brew list gcc)
- * Compilation line to use pragma, simd (vectorization) and tuple: g++ -O3 -std=c++17 name.cpp -fopenmp -o name.o
  */
 
 #include <iostream>
@@ -16,12 +14,12 @@
 #include <omp.h> //import library to use pragma
 #include <tuple> //to output multiple components of a function
 
-#include "print_file.h"
-#include "reflective_boundary_conditions.h"
-#include "circular_reflective_boundary_conditions.h"
-#include "initialization.h"
-#include "update_position.h"
-#include "check_nooverlap.h"
+#include "headers/print_file.h"
+#include "headers/reflective_boundary_conditions.h"
+#include "headers/circular_reflective_boundary_conditions.h"
+#include "headers/initialization.h"
+#include "headers/update_position.h"
+#include "headers/check_nooverlap.h"
 
 #define PI 3.141592653589793
 #define N_thread 6
@@ -49,6 +47,7 @@ int main(int argc, char *argv[])
 	double epsilon, delta, Dt, De, vs;
 	double Wall;
 	int Particles;
+	int N; // number of iterations
 	char name[100];
 	char key1[] = "circular";
 	char key2[] = "squared";
@@ -72,14 +71,13 @@ int main(int argc, char *argv[])
 			flag = false;
 		}
 	}
-	fscanf(parameter, "%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\n", &epsilon, &delta, &Particles, &Dt, &De, &vs, &Wall);
-	printf("%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\n", epsilon, delta, Particles, Dt, De, vs, Wall);
+	fscanf(parameter, "%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\t%d\n", &epsilon, &delta, &Particles, &Dt, &De, &vs, &Wall, &N);
+	printf("%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\t%d\n", epsilon, delta, Particles, Dt, De, vs, Wall, N);
 
 	double *x = (double *)malloc(Particles * sizeof(double)); // x-position
 	double *y = (double *)malloc(Particles * sizeof(double)); // y-position
 
 	// parameters
-	const int N = 1E3; // number of iterations
 	const int L = 1.0; // particle size
 
 	// initialization of the random generator
