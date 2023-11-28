@@ -119,8 +119,7 @@ int main(int argc, char *argv[])
 	printf("Initialization done.\n");
 
 	// Time evoultion
-	int time;
-	for (time = 0; time < N; time++)
+	for (int time = 0; time < N; time++)
 	{
 		update_position(
 			x, y, phi, prefactor_e, Particles,
