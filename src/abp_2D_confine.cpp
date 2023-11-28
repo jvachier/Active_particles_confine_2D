@@ -103,7 +103,8 @@ int main(int argc, char *argv[])
 	double prefactor_interaction = epsilon * 48.0;
 	double r = 5.0 * L;
 
-	clock_t tStart = clock(); // check time for one trajectory
+	double itime, ftime, exec_time;
+    itime = omp_get_wtime(); 
 
 	fprintf(datacsv, "Particles,x-position,y-position,time,%s\n", name);
 
@@ -118,8 +119,7 @@ int main(int argc, char *argv[])
 	printf("Initialization done.\n");
 
 	// Time evoultion
-	int time;
-	for (time = 0; time < N; time++)
+	for (int time = 0; time < N; time++)
 	{
 		update_position(
 			x, y, phi, prefactor_e, Particles,
@@ -149,7 +149,9 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	printf("Time taken: %.2fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC); // time for one trajectory
+	ftime = omp_get_wtime();
+    exec_time = ftime - itime;
+    printf("Time taken is %f", exec_time);
 
 	free(x);
 	free(y);
