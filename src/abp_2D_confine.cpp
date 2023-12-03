@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
 
 	double xi_px = 0.0; // noise for x-position
 	double xi_py = 0.0; // noise for y-position
-	double xi_e = 0.0;  // noise ortientation
+	double xi_e = 0.0;	// noise ortientation
 
 	double phi = 0.0;
 	double prefactor_e = sqrt(2.0 * delta * De);
@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
 	double r = 5.0 * L;
 
 	double itime, ftime, exec_time;
-    itime = omp_get_wtime(); 
+	itime = omp_get_wtime();
 
 	fprintf(datacsv, "Particles,x-position,y-position,time,%s\n", name);
 
@@ -150,8 +150,8 @@ int main(int argc, char *argv[])
 	}
 
 	ftime = omp_get_wtime();
-    exec_time = ftime - itime;
-    printf("Time taken is %f", exec_time);
+	exec_time = ftime - itime;
+	printf("Time taken is %f", exec_time);
 
 	free(x);
 	free(y);

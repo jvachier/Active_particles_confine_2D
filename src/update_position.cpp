@@ -11,7 +11,7 @@ void update_position(
 {
 	double a = 0.0; // local variable - here check if no conflict elsewhere
 	double F = 0.0, R = 0.0;
-#pragma omp parallel for simd 
+#pragma omp parallel for simd
 	for (int k = 0; k < Particles; k++)
 	{
 		xi_e = distribution_e(generator);
