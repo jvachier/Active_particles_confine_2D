@@ -17,9 +17,11 @@ test.mp4
 # Ignore all executable files
 *.o
 *.out
+*.sh
 
 # Ignore jupyter checkpoints
 *.ipynb_checkpoints
+*.ipynb
 
 # Ignore all json file
 *.json
