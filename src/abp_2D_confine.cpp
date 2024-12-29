@@ -51,59 +51,61 @@ int main(int argc, char *argv[]) {
   char key2[] = "squared";
   bool flag = false;
 
-	printf("Select confinement geometry, either squared or circular:");
-	scanf("%s", name);
+  printf("Select confinement geometry, either squared or circular:");
+  scanf("%s", name);
 
-	while (flag == false)
-	{
-		if ((strcmp(name, key1) == 0) or (strcmp(name, key2) == 0))
-		{
-			flag = true;
-		}
-		else
-		{
-			printf("You have not selected the correct, please select again\n");
-			printf("Select confinement geometry, either squared or circular:");
-			scanf("%s", name);
-			flag = false;
-		}
-	}
-	fscanf(parameter, "%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\t%d\n", &epsilon, &delta, &Particles, &Dt, &De, &vs, &Wall, &total_time);
-	printf("%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\t%d\n", epsilon, delta, Particles, Dt, De, vs, Wall, total_time);
+  while (flag == false) {
+    if ((strcmp(name, key1) == 0) || (strcmp(name, key2) == 0)) {
+      flag = true;
+    } else {
+      printf("You have not selected the correct, please select again\n");
+      printf("Select confinement geometry, either squared or circular:");
+      scanf("%s", name);
+      flag = false;
+    }
+  }
+  fscanf(parameter, "%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\t%d\n", \
+    &epsilon, &delta, &Particles, &Dt, &De, &vs, &Wall, &total_time);
+  printf("%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\t%d\n", \
+    epsilon, delta, Particles, Dt, De, vs, Wall, total_time);
 
-	double *x = (double *)malloc(Particles * sizeof(double)); // x-position
-	double *y = (double *)malloc(Particles * sizeof(double)); // y-position
+  // Position
+  double *x = reinterpret_cast<double*> \
+    (malloc(Particles * sizeof(double)));  // x-position
+  double *y = reinterpret_cast<double*> \
+    (malloc(Particles * sizeof(double)));  // y-position
 
-	// parameters
-	const int L = 1.0; // particle size
+  // parameters
+  const int L = 1.0;  // particle size
 
-	// initialization of the random generator
-	random_device rdev;
-	default_random_engine generator(rdev()); // random seed -> rdev
-	// default_random_engine generator(1); //same seed
+  // initialization of the random generator
+  random_device rdev;
+  default_random_engine generator(rdev());  // random seed -> rdev
+  // default_random_engine generator(1);  //same seed
 
-	// Distributions Gaussian
-	normal_distribution<double> Gaussdistribution(0.0, 1.0);
-	// Distribution Uniform for initialization
-	uniform_real_distribution<double> distribution(-Wall, Wall);
-	// uniform_real_distribution<double> distribution_e(0.0,360.0*PI / 180.0); // directly in radian
-	uniform_real_distribution<double> distribution_e(0.0, 360.0);
+  // Distributions Gaussian
+  normal_distribution<double> Gaussdistribution(0.0, 1.0);
+  // Distribution Uniform for initialization
+  uniform_real_distribution<double> distribution(-Wall, Wall);
+  // uniform_real_distribution<double> \
+  //  distribution_e(0.0,360.0*PI / 180.0); // directly in radian
+  uniform_real_distribution<double> distribution_e(0.0, 360.0);
 
-	double xi_px = 0.0; // noise for x-position
-	double xi_py = 0.0; // noise for y-position
-	double xi_e = 0.0;	// noise ortientation
+  double xi_px = 0.0;  // noise for x-position
+  double xi_py = 0.0;  // noise for y-position
+  double xi_e = 0.0;  // noise ortientation
 
-	double phi = 0.0;
-	double prefactor_e = sqrt(2.0 * delta * De);
-	double prefactor_xi_px = sqrt(2.0 * delta * Dt);
-	double prefactor_xi_py = sqrt(2.0 * delta * Dt);
-	double prefactor_interaction = epsilon * 48.0;
-	double r = 5.0 * L;
+  double phi = 0.0;
+  double prefactor_e = sqrt(2.0 * delta * De);
+  double prefactor_xi_px = sqrt(2.0 * delta * Dt);
+  double prefactor_xi_py = sqrt(2.0 * delta * Dt);
+  double prefactor_interaction = epsilon * 48.0;
+  double r = 5.0 * L;
 
-	double itime, ftime, exec_time;
-	itime = omp_get_wtime();
+  double itime, ftime, exec_time;
+  itime = omp_get_wtime();
 
-	fprintf(datacsv, "Particles,x-position,y-position,time,%s\n", name);
+  fprintf(datacsv, "Particles,x-position,y-position,time,%s\n", name);
 
 	// initialization position and activity
 	initialization(
