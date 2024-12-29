@@ -1,4 +1,4 @@
-CC = g++-13 -O3 -std=c++17
+CC = g++-14 -O3 -std=c++17
 CFLAGS = -Wall -g -fopenmp -fopenmp-simd
 
 abp_2D_confine: abp_2D_confine.o print_file.o reflective_boundary_conditions.o circular_reflective_boundary_conditions.o initialization.o update_position.o check_nooverlap.o
