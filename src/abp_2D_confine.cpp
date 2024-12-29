@@ -87,8 +87,7 @@ int main(int argc, char *argv[]) {
   normal_distribution<double> Gaussdistribution(0.0, 1.0);
   // Distribution Uniform for initialization
   uniform_real_distribution<double> distribution(-Wall, Wall);
-  // uniform_real_distribution<double> \
-  //  distribution_e(0.0,360.0*PI / 180.0); // directly in radian
+  // uniform_real_distribution<double> distribution_e(0.0,360.0*PI / 180.0); // directly in radian
   uniform_real_distribution<double> distribution_e(0.0, 360.0);
 
   double xi_px = 0.0;  // noise for x-position
