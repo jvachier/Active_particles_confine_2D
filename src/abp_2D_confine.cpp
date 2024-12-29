@@ -5,14 +5,14 @@
  * Date: 2023
  */
 
+#include <omp.h>
+#include <time.h>
+#include <stdio.h>
 #include <iostream>
 #include <random>
 #include <cstring>
-#include <stdio.h>
 #include <cmath>
-#include <time.h>
-#include <omp.h> //import library to use pragma
-#include <tuple> //to output multiple components of a function
+#include <tuple>
 
 #include "headers/print_file.h"
 #include "headers/reflective_boundary_conditions.h"
@@ -26,33 +26,30 @@
 
 using namespace std;
 
-int main(int argc, char *argv[])
-{
-	// File
-	FILE *datacsv;
-	FILE *parameter;
-	parameter = fopen("parameter.txt", "r");
-	datacsv = fopen("./data/simulation.csv", "w");
+int main(int argc, char *argv[]) {
+  // File
+  FILE *datacsv;
+  FILE *parameter;
+  parameter = fopen("parameter.txt", "r");
+  datacsv = fopen("./data/simulation.csv", "w");
 
-	// check if the file parameter is exist
-	if (parameter == NULL)
-	{
-		printf("no such file.");
-		return 0;
-	}
+  // check if the file parameter is exist
+  if (parameter == NULL) {
+    printf("no such file.");
+    return 0;
+  }
 
-	omp_set_num_threads(N_thread);
+  omp_set_num_threads(N_thread);
 
-	// read the parameters from the file
-	double epsilon, delta, Dt, De, vs;
-	double Wall;
-	int Particles;
-	int N; // number of iterations
-	char name[100];
-	char key1[] = "circular";
-	char key2[] = "squared";
-
-	bool flag = false;
+  // read the parameters from the file
+  double epsilon, delta, Dt, De, vs;
+  double Wall;
+  int Particles;
+  int total_time;  // number of iterations
+  char name[100];
+  char key1[] = "circular";
+  char key2[] = "squared";
+  bool flag = false;
 
 	printf("Select confinement geometry, either squared or circular:");
 	scanf("%s", name);
@@ -71,8 +68,8 @@ int main(int argc, char *argv[])
 			flag = false;
 		}
 	}
-	fscanf(parameter, "%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\t%d\n", &epsilon, &delta, &Particles, &Dt, &De, &vs, &Wall, &N);
-	printf("%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\t%d\n", epsilon, delta, Particles, Dt, De, vs, Wall, N);
+	fscanf(parameter, "%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\t%d\n", &epsilon, &delta, &Particles, &Dt, &De, &vs, &Wall, &total_time);
+	printf("%lf\t%lf\t%d\t%lf\t%lf\t%lf\t%lf\t%d\n", epsilon, delta, Particles, Dt, De, vs, Wall, total_time);
 
 	double *x = (double *)malloc(Particles * sizeof(double)); // x-position
 	double *y = (double *)malloc(Particles * sizeof(double)); // y-position
@@ -119,7 +116,7 @@ int main(int argc, char *argv[])
 	printf("Initialization done.\n");
 
 	// Time evoultion
-	for (int time = 0; time < N; time++)
+	for (int time = 0; time < total_time; time++)
 	{
 		update_position(
 			x, y, phi, prefactor_e, Particles,
