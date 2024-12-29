@@ -107,54 +107,49 @@ int main(int argc, char *argv[]) {
 
   fprintf(datacsv, "Particles,x-position,y-position,time,%s\n", name);
 
-	// initialization position and activity
-	initialization(
-		x, y, Particles,
-		generator, distribution);
+  // initialization position and activity
+  initialization(
+    x, y, Particles,
+    generator, distribution);
 
-	check_nooverlap(
-		x, y, Particles, L,
-		generator, distribution);
-	printf("Initialization done.\n");
+  check_nooverlap(
+    x, y, Particles, L,
+    generator, distribution);
+  printf("Initialization done.\n");
 
-	// Time evoultion
-	for (int time = 0; time < total_time; time++)
-	{
-		update_position(
-			x, y, phi, prefactor_e, Particles,
-			delta, De, Dt, xi_e, xi_px,
-			xi_py, vs, prefactor_xi_px, prefactor_xi_py,
-			r, prefactor_interaction,
-			generator, Gaussdistribution, distribution_e);
-		if (strcmp(name, key1) == 0)
-		{
-			circular_reflective_boundary_conditions(
-				x, y, Particles,
-				Wall, L);
-		}
-		if (strcmp(name, key2) == 0)
-		{
-			reflective_boundary_conditions(
-				x, y, Particles,
-				Wall, L);
-		}
+// Time evoultion
+  for (int time = 0; time < total_time; time++) {
+    update_position(
+      x, y, phi, prefactor_e, Particles,
+      delta, De, Dt, xi_e, xi_px,
+      xi_py, vs, prefactor_xi_px, prefactor_xi_py,
+      r, prefactor_interaction,
+      generator, Gaussdistribution, distribution_e);
+    if (strcmp(name, key1) == 0) {
+      circular_reflective_boundary_conditions(
+      x, y, Particles,
+      Wall, L);
+    }
+    if (strcmp(name, key2) == 0) {
+      reflective_boundary_conditions(
+      x, y, Particles,
+      Wall, L);
+    }
+    if (time % 100 == 0 && time >= 0) {
+      print_file(
+        x, y,
+        Particles, time,
+        datacsv);
+    }
+  }
 
-		if (time % 100 == 0 && time >= 0)
-		{
-			print_file(
-				x, y,
-				Particles, time,
-				datacsv);
-		}
-	}
+  ftime = omp_get_wtime();
+  exec_time = ftime - itime;
+  printf("Time taken is %f", exec_time);
 
-	ftime = omp_get_wtime();
-	exec_time = ftime - itime;
-	printf("Time taken is %f", exec_time);
+  free(x);
+  free(y);
 
-	free(x);
-	free(y);
-
-	fclose(datacsv);
-	return 0;
+  fclose(datacsv);
+  return 0;
 }
